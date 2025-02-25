@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics
 
 from materials.models import Course, Lesson
-from materials.serializers import CourseSerializers, LessonSerializers, PaymentsSerializers
+from materials.serializers import CourseSerializers, LessonSerializers
 
 
 # Create your views here.
@@ -33,6 +33,3 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
 
-
-class PaymentsCreateAPIView(generics.CreateAPIView):
-    serializer_class = PaymentsSerializers

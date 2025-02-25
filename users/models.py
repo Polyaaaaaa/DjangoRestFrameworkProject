@@ -4,6 +4,8 @@ from rest_framework import serializers
 # Create your models here.
 from django.contrib.auth.models import AbstractUser
 
+from materials.models import Course, Lesson
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -20,16 +22,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-
-
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'phone_number',
-        )
 
 
 class Payments(models.Model):
