@@ -6,16 +6,16 @@ from materials.models import Course, Lesson
 class LessonSerializers(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = ["id", "name", "description", "video_link"]
 
 
 class CourseSerializers(serializers.ModelSerializer):
-    lesson_quantity = serializers.SerializerMethodField()  # Количество уроков
-    lessons = LessonSerializers(many=True, read_only=True, source="lesson_set")  # Информация о всех уроках
+    lessons = LessonSerializers(many=True, read_only=True)  # Используем related_name="lessons"
+    lesson_quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = ["id", "name", "description", "lessons", "lesson_quantity"]
 
     def get_lesson_quantity(self, obj):
-        return obj.lesson_set.count()  # Подсчет количества уроков
+        return obj.lessons.count()  # Используем related_name="lessons"
