@@ -6,6 +6,11 @@ from materials.views import CourseViewSet, LessonCreateAPIView, LessonListAPIVie
 from users.views import PaymentsCreateAPIView, PaymentsListAPIView
 from django.urls import path
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 app_name = MaterialsConfig.name
 
 router = DefaultRouter()
@@ -21,5 +26,8 @@ urlpatterns = [
                   # Payments
                   path('payments/create/', PaymentsCreateAPIView.as_view(), name='payments_create'),
                   path("payments/", PaymentsListAPIView.as_view(), name="payments_list"),
+
+                  path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+                  path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
               ] + router.urls
