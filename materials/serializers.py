@@ -11,7 +11,7 @@ class LessonSerializers(serializers.ModelSerializer):
 
 class CourseSerializers(serializers.ModelSerializer):
     lessons = LessonSerializers(many=True, read_only=True)  # Используем related_name="lessons"
-    lesson_quantity = serializers.SerializerMethodField()
+    lesson_quantity = serializers.SerializerMethodField(source='lessons.all.first.lessons')
 
     class Meta:
         model = Course

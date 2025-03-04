@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 
 from materials.views import CourseViewSet, LessonCreateAPIView, LessonListAPIView, LessonRetrieveAPIView, \
     LessonUpdateAPIView, LessonDestroyAPIView
-from users.views import PaymentsCreateAPIView, PaymentsListAPIView
+from users.views import PaymentsCreateAPIView, PaymentsListAPIView, UserListAPIView, UserRetrieveAPIView, \
+    UserUpdateAPIView, UserDestroyAPIView, RegisterAPIView
 from django.urls import path
 
 from rest_framework_simplejwt.views import (
@@ -29,5 +30,12 @@ urlpatterns = [
 
                   path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
                   path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+
+                  # Users
+                  path('users/', UserListAPIView.as_view(), name='user_list'),
+                  path('users/register/', RegisterAPIView.as_view(), name='user-register'),
+                  path('users/<int:pk>/', UserRetrieveAPIView.as_view(), name='user_detail'),
+                  path('users/<int:pk>/update/', UserUpdateAPIView.as_view(), name='user_update'),
+                  path('users/<int:pk>/delete/', UserDestroyAPIView.as_view(), name='user_delete'),
 
               ] + router.urls
