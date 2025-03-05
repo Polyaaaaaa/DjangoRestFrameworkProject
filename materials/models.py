@@ -1,6 +1,8 @@
 from django.db import models
+from rest_framework import serializers
 
 from config import settings
+from materials.validators import NameValidator
 
 
 # Create your models here.

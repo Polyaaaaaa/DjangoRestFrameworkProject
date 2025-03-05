@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
 from materials.models import Course, Lesson
+from materials.validators import NameValidator
 
 
 class LessonSerializers(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ["id", "name", "description", "video_link", "course"]
+        fields = '__all__'
 
 
 class CourseSerializers(serializers.ModelSerializer):
@@ -15,7 +16,11 @@ class CourseSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ["id", "name", "description", "lessons", "lesson_quantity"]
+        fields = '__all__'
+        validators = [
+            NameValidator(field='name'),
+            serializers.UniqueTogetherValidator(fields=['name', 'description'], queryset=Course.objects.all())
+        ]
 
     def get_lesson_quantity(self, obj):
         return obj.lessons.count()  # Используем related_name="lessons"
