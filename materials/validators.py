@@ -2,7 +2,7 @@ import re
 from rest_framework.serializers import ValidationError
 
 
-class NameValidator:
+class LinkValidator:
 
     def __init__(self, field):
         self.field = field
@@ -11,4 +11,4 @@ class NameValidator:
         reg = re.compile('^[a-zA-Z0-9\.\-\ ]+$')
         tmp_val = dict(value).get(self.field)
         if not bool(reg.match(tmp_val)):
-            raise ValidationError('Name is not ok')
+            raise ValidationError('Video_link is not ok')

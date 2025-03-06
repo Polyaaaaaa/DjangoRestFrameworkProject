@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from config import settings
 from materials.validators import NameValidator
+from users.models import User
 
 
 # Create your models here.
@@ -34,3 +35,18 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+        ordering = ['name', ]
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons", null=True)
+
+    def __str__(self):
+        return f'{self.user} bought course: {self.course}'
+
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
+        ordering = ['user', ]
+
