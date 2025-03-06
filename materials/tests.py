@@ -1,7 +1,8 @@
+from django.core.management import call_command
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from materials.models import Lesson
+from materials.models import Lesson, Subscription, Course
 from users.models import User
 
 
@@ -9,9 +10,15 @@ from users.models import User
 class MaterialsTestCase(APITestCase):
 
     def setUp(self) -> None:
-        """Создание тестового пользователя"""
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        """Создание тестового пользователя и тестового урока"""
+        self.user = User.objects.create_user(username="test user", password="test pass")
         self.client.force_authenticate(user=self.user)
+
+        self.lesson = Lesson.objects.create(
+            name="Test Lesson",
+            description="Test Description",
+            owner=self.user
+        )
 
     def test_create_lesson(self):
         """ Тестирование создания урока """
@@ -35,40 +42,74 @@ class MaterialsTestCase(APITestCase):
 
         self.assertEqual(
             response.json(),
-            {'id': 1, 'name': 'Test', 'description': 'Test', 'preview_image': None, 'video_link': None, 'course': None,
+            {'id': 2, 'name': 'Test', 'description': 'Test', 'preview_image': None, 'video_link': None, 'course': None,
              'owner': 1}
         )
 
     def test_list_lesson(self):
         """ Тестирование вывода списка уроков """
 
-        Lesson.objects.create(
-            name='list test',
-            description='list test',
-            owner=self.user  # Добавляем владельца урока
+        # Создаем дополнительные уроки
+        lesson_1 = Lesson.objects.create(
+            name='Test Lesson 1',
+            description='Description for Lesson 1',
+            owner=self.user
         )
 
+        lesson_2 = Lesson.objects.create(
+            name='Test Lesson 2',
+            description='Description for Lesson 2',
+            owner=self.user
+        )
+
+        # Отправляем запрос на получение списка уроков
         response = self.client.get('/lesson/')
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        # Проверяем, что статус ответа 200
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Извлекаем результаты из ответа с пагинацией
         response_data = response.json()['results']
 
-        expected_data = [{
-            'id': 2,
-            'name': 'list test',
-            'description': 'list test',
-            'preview_image': None,
-            'video_link': None,
-            'course': None,
-            'owner': self.user.id  # Используем ID тестового пользователя
-        }]
+        # Сортируем данные по ID
+        response_data_sorted = sorted(response_data, key=lambda x: x['id'])
 
-        self.assertEqual(response_data, expected_data)
+        # Ожидаемые данные для проверки
+        expected_data = [
+            {
+                'id': lesson_1.id,  # ID первого созданного урока
+                'name': 'Test Lesson 1',
+                'description': 'Description for Lesson 1',
+                'preview_image': None,
+                'video_link': None,
+                'course': None,
+                'owner': self.user.id
+            },
+            {
+                'id': lesson_2.id,  # ID второго созданного урока
+                'name': 'Test Lesson 2',
+                'description': 'Description for Lesson 2',
+                'preview_image': None,
+                'video_link': None,
+                'course': None,
+                'owner': self.user.id
+            },
+            {
+                'id': self.lesson.id,  # ID урока, созданного в setUp
+                'name': 'Test Lesson',
+                'description': 'Test Description',
+                'preview_image': None,
+                'video_link': None,
+                'course': None,
+                'owner': self.user.id
+            }
+        ]
+
+        # Сортируем ожидаемые данные по ID
+        expected_data_sorted = sorted(expected_data, key=lambda x: x['id'])
+
+        # Сравниваем отсортированные данные
+        self.assertEqual(response_data_sorted, expected_data_sorted)
 
     def test_retrieve_lesson(self):
         """ Тестирование получения одного урока """
@@ -84,7 +125,7 @@ class MaterialsTestCase(APITestCase):
             'description': 'Updated Description'
         }
 
-        response = self.client.put(f'/lesson/{self.lesson.id}/', data)
+        response = self.client.put(f'/lesson/update/{self.lesson.id}/', data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.lesson.refresh_from_db()
@@ -92,32 +133,34 @@ class MaterialsTestCase(APITestCase):
 
     def test_destroy_lesson(self):
         """ Тестирование удаления урока """
-        response = self.client.delete(f'/lesson/{self.lesson.id}/')
+        response = self.client.delete(f'/lesson/delete/{self.lesson.id}/')
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Lesson.objects.filter(id=self.lesson.id).exists())
 
     def test_subscription(self):
         """ Тестирование подписки """
-        Lesson.objects.create(
+
+        # Создаем курс для подписки
+        course = Course.objects.create(
             name='list test',
             description='list test',
-            owner=self.user  # Добавляем владельца урока
+            owner=self.user  # Добавляем владельца курса
         )
-        response = self.client.get('/lesson/')
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
-        # Извлекаем результаты из ответа с пагинацией
-        response_data = response.json()['results']
-        expected_data = [{
-            'id': 2,
-            'name': 'list test',
-            'description': 'list test',
-            'preview_image': None,
-            'video_link': None,
-            'course': None,
-            'owner': self.user.id  # Используем ID тестового пользователя
-        }]
-        self.assertEqual(response_data, expected_data)
+
+        # Отправляем запрос для подписки на курс
+        data = {'course_id': course.id}  # Передаем ID курса
+        response = self.client.post('/subscription/', data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Извлекаем сообщение из ответа
+        response_data = response.json()
+        self.assertIn('message', response_data)  # Проверяем, что в ответе есть сообщение
+
+        # Проверяем, что подписка была добавлена
+        subscription = Subscription.objects.filter(user=self.user, course=course).exists()
+        self.assertTrue(subscription)
+
+        # Проверяем, что сообщение соответствует ожидаемому
+        self.assertEqual(response_data['message'], 'Подписка добавлена')

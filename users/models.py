@@ -4,7 +4,15 @@ from rest_framework import serializers
 # Create your models here.
 from django.contrib.auth.models import AbstractUser
 
-from materials.models import Course, Lesson
+
+def get_course_model():
+    from materials.models import Course
+    return Course
+
+
+def get_lesson_model():
+    from materials.models import Lesson
+    return Lesson
 
 
 class User(AbstractUser):
@@ -32,8 +40,8 @@ class Payments(models.Model):
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments', verbose_name="Пользователь")
     payment_date = models.PositiveIntegerField(verbose_name="дата платежа")
-    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
-    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True)
+    paid_course = models.ForeignKey('materials.Course', on_delete=models.CASCADE, null=True, blank=True)
+    paid_lesson = models.ForeignKey('materials.Lesson', on_delete=models.CASCADE, null=True, blank=True)
     payment_sum = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма платежа")
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, verbose_name="Метод оплаты")
 

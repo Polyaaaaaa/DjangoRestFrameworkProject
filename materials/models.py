@@ -2,8 +2,9 @@ from django.db import models
 from rest_framework import serializers
 
 from config import settings
-from materials.validators import NameValidator
-from users.models import User
+from materials.validators import LinkValidator
+
+User = settings.AUTH_USER_MODEL
 
 
 # Create your models here.
@@ -39,8 +40,9 @@ class Lesson(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", null=True, blank=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons", null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions",
+                             null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="subscriptions", null=True)
 
     def __str__(self):
         return f'{self.user} bought course: {self.course}'
