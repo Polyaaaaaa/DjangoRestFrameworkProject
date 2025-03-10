@@ -6,16 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('materials', '0006_alter_lesson_options_lesson_created_at'),
+        ("materials", "0006_alter_lesson_options_lesson_created_at"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='lesson',
-            options={'ordering': ['name'], 'verbose_name': 'урок', 'verbose_name_plural': 'уроки'},
+            name="lesson",
+            options={
+                "ordering": ["name"],
+                "verbose_name": "урок",
+                "verbose_name_plural": "уроки",
+            },
         ),
         migrations.RemoveField(
-            model_name='lesson',
-            name='created_at',
+            model_name="lesson",
+            name="created_at",
         ),
     ]

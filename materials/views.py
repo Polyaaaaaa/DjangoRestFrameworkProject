@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -13,6 +15,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 # Create your views here.
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="description from swagger_auto_schema via method_decorator"
+))
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializers
     queryset = Course.objects.all()
@@ -21,7 +26,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class CourseListAPIView(generics.ListAPIView):
     serializer_class = CourseSerializers
-    queryset = Course.objects.all().order_by('name')
+    queryset = Course.objects.all().order_by("name")
     permission_classes = [IsAuthenticated, IsOwnerOrStaff]
     pagination_class = MaterialsPaginator
 
@@ -34,7 +39,7 @@ class CourseListAPIView(generics.ListAPIView):
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     pagination_class = MaterialsPaginator
 
     def perform_create(self, serializer):
@@ -45,8 +50,8 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializers
-    queryset = Lesson.objects.all().order_by('name')
-    permission_classes = [IsAuthenticated, IsOwnerOrStaff]
+    queryset = Lesson.objects.all().order_by("name")
+    permission_classes = [AllowAny, IsOwnerOrStaff]
     pagination_class = MaterialsPaginator
 
     def get(self, request, **kwargs):
@@ -59,7 +64,7 @@ class LessonListAPIView(generics.ListAPIView):
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsOwnerOrStaff]
+    permission_classes = [AllowAny, IsOwnerOrStaff]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
@@ -70,24 +75,28 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsOwnerOrStaff]
+    permission_classes = [AllowAny, IsOwnerOrStaff]
 
 
 class SubscriptionAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         user = request.user  # Получаем текущего пользователя
         course_id = request.data.get("course_id")  # Получаем ID курса из запроса
         course_item = get_object_or_404(Course, id=course_id)  # Получаем объект курса
 
-        subs_item = Subscription.objects.filter(user=user, course=course_item)  # Проверяем подписку
+        subs_item = Subscription.objects.filter(
+            user=user, course=course_item
+        )  # Проверяем подписку
 
         if subs_item.exists():
             subs_item.delete()  # Удаляем подписку
             message = "Подписка удалена"
         else:
-            Subscription.objects.create(user=user, course=course_item)  # Создаем подписку
+            Subscription.objects.create(
+                user=user, course=course_item
+            )  # Создаем подписку
             message = "Подписка добавлена"
 
         return Response({"message": message})

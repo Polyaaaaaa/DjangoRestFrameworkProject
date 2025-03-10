@@ -7,35 +7,61 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=150, verbose_name='название')),
-                ('preview_image', models.ImageField(blank=True, null=True, upload_to='images/')),
-                ('description', models.TextField(verbose_name='описание')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=150, verbose_name="название")),
+                (
+                    "preview_image",
+                    models.ImageField(blank=True, null=True, upload_to="images/"),
+                ),
+                ("description", models.TextField(verbose_name="описание")),
             ],
             options={
-                'verbose_name': 'курс',
-                'verbose_name_plural': 'курсы',
+                "verbose_name": "курс",
+                "verbose_name_plural": "курсы",
             },
         ),
         migrations.CreateModel(
-            name='Lesson',
+            name="Lesson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=150, verbose_name='название')),
-                ('description', models.TextField(verbose_name='описание')),
-                ('preview_image', models.ImageField(blank=True, null=True, upload_to='images/')),
-                ('video_link', models.URLField(blank=True, null=True, verbose_name='ссылка на видео')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=150, verbose_name="название")),
+                ("description", models.TextField(verbose_name="описание")),
+                (
+                    "preview_image",
+                    models.ImageField(blank=True, null=True, upload_to="images/"),
+                ),
+                (
+                    "video_link",
+                    models.URLField(
+                        blank=True, null=True, verbose_name="ссылка на видео"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'урок',
-                'verbose_name_plural': 'уроки',
+                "verbose_name": "урок",
+                "verbose_name_plural": "уроки",
             },
         ),
     ]

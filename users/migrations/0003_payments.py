@@ -8,26 +8,77 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('materials', '0003_delete_payments'),
-        ('users', '0002_rename_country_user_city'),
+        ("materials", "0003_delete_payments"),
+        ("users", "0002_rename_country_user_city"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payments',
+            name="Payments",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment_date', models.PositiveIntegerField(verbose_name='дата платежа')),
-                ('payment_sum', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Сумма платежа')),
-                ('payment_method', models.CharField(choices=[('card', 'Credit/Debit Card'), ('paypal', 'PayPal'), ('bank', 'Bank Transfer')], max_length=10, verbose_name='Метод оплаты')),
-                ('paid_course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='materials.course')),
-                ('paid_lesson', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='materials.lesson')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "payment_date",
+                    models.PositiveIntegerField(verbose_name="дата платежа"),
+                ),
+                (
+                    "payment_sum",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="Сумма платежа"
+                    ),
+                ),
+                (
+                    "payment_method",
+                    models.CharField(
+                        choices=[
+                            ("card", "Credit/Debit Card"),
+                            ("paypal", "PayPal"),
+                            ("bank", "Bank Transfer"),
+                        ],
+                        max_length=10,
+                        verbose_name="Метод оплаты",
+                    ),
+                ),
+                (
+                    "paid_course",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="materials.course",
+                    ),
+                ),
+                (
+                    "paid_lesson",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="materials.lesson",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Платеж',
-                'verbose_name_plural': 'Платежи',
-                'ordering': ('-payment_date',),
+                "verbose_name": "Платеж",
+                "verbose_name_plural": "Платежи",
+                "ordering": ("-payment_date",),
             },
         ),
     ]
