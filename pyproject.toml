@@ -16,6 +16,7 @@ django-cors-headers = "^4.7.0"
 requests = "^2.32.3"
 black = "^25.1.0"
 stripe = "^11.6.0"
+flake8 = "^7.1.2"
 
 
 [build-system]

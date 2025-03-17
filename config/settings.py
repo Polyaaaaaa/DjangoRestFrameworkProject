@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from materials.services import apikey
 
 load_dotenv()
 

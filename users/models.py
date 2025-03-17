@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework import serializers
+# from rest_framework import serializers
 
 # Create your models here.
 from django.contrib.auth.models import AbstractUser
@@ -56,7 +56,10 @@ class Payments(models.Model):
         "materials.Lesson", on_delete=models.CASCADE, null=True, blank=True
     )
     payment_sum = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Сумма платежа", help_text="Укажите сумму платежа"
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Сумма платежа",
+        help_text="Укажите сумму платежа",
     )
     payment_method = models.CharField(
         max_length=10, choices=PAYMENT_METHODS, verbose_name="Метод оплаты"

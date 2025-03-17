@@ -1,8 +1,8 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from materials.permissions import IsOwnerOrStaff
 from users.filters import PaymentsFilter
@@ -74,5 +74,3 @@ class UserDestroyAPIView(generics.DestroyAPIView):
 
     queryset = User.objects.all()
     permission_classes = [IsOwnerOrStaff]  # Только владелец или админ
-
-

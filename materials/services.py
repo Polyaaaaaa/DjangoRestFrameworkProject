@@ -1,11 +1,8 @@
-import os
+# import os
 
-import requests
+# import requests
 from dotenv import load_dotenv
-from rest_framework import status
+# from rest_framework import status
 
 
 load_dotenv()
-
-
-

@@ -6,10 +6,10 @@ from rest_framework import status
 import stripe
 
 load_dotenv()
-apikey = os.getenv('CUR_API_KEY')
-url = os.getenv('CUR_API_URL')
+apikey = os.getenv("CUR_API_KEY")
+url = os.getenv("CUR_API_URL")
 
-stripe.api_key = os.getenv('STRIPE_API_KEY')
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 stripe.Price.create(
     currency="usd",
     unit_amount=1000,
@@ -29,11 +29,9 @@ stripe.Product.create(name="Gold Plan")
 def convert_currencies(rub_price):
     usd_price = 0
 
-    response = requests.get(
-        f"{url}v3/latest?apikey={apikey}&currencies=RUB"
-    )
+    response = requests.get(f"{url}v3/latest?apikey={apikey}&currencies=RUB")
     if response.status_code == status.HTTP_200_OK:
-        usd_rate = response.json()['data']['RUB']['value']
+        usd_rate = response.json()["data"]["RUB"]["value"]
         usd_price = rub_price * usd_rate
     return usd_price
 

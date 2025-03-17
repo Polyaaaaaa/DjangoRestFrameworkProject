@@ -1,8 +1,5 @@
 from django.db import models
-from rest_framework import serializers
-
 from config import settings
-from materials.validators import LinkValidator
 
 User = settings.AUTH_USER_MODEL
 
@@ -15,7 +12,7 @@ class Course(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
     )
-    amount = models.IntegerField(default=1000, verbose_name='цена')
+    amount = models.IntegerField(default=1000, verbose_name="цена")
 
     def __str__(self):
         return f"{self.name}"
