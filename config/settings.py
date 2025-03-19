@@ -59,6 +59,11 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': None,
 }
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = "Australia/Tasmania"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
