@@ -1,5 +1,6 @@
 # from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django_celery_beat.utils import now
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
 from rest_framework.generics import get_object_or_404
@@ -9,9 +10,11 @@ from rest_framework.views import APIView
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import MaterialsPaginator
 from materials.permissions import IsOwnerOrStaff
-from materials.serializers import CourseSerializers, LessonSerializers
+from materials.serializers import CourseSerializers, LessonSerializers, SubscriptionSerializer
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from materials.tasks import update_send_email
 
 
 # Create your views here.
@@ -25,6 +28,19 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializers
     queryset = Course.objects.all()
     permission_classes = [AllowAny]
+
+
+class CourseUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = CourseSerializers
+    queryset = Course.objects.all()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        last_updated = course.updated_at  # Убедитесь, что в модели Course есть поле `updated_at`
+
+        # Проверяем, прошло ли 4 часа с последнего обновления
+        if last_updated is None or (now() - last_updated).total_seconds() > 14400:
+            update_send_email.delay(course.pk, "Course")
 
 
 class CourseListAPIView(generics.ListAPIView):
@@ -73,7 +89,14 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
-    permission_classes = [IsOwnerOrStaff]
+
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+        course = lesson.course
+        last_updated = course.updated_at  # Поле должно быть в модели Course
+
+        if last_updated is None or (now() - last_updated).total_seconds() > 14400:
+            update_send_email.delay(course.pk, "Course")
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
@@ -103,3 +126,14 @@ class SubscriptionAPIView(APIView):
             message = "Подписка добавлена"
 
         return Response({"message": message})
+
+
+# class SubscriptionCreateAPIView(generics.CreateAPIView):
+#     serializer_class = SubscriptionSerializer
+#
+#     def perform_create(self, serializer):
+#         new_subscription = serializer.save()
+#         if new_subscription.course:
+#             send_email.delay(new_subscription.course_id, 'Course')
+#         else:
+#             send_email.delay(new_subscription.lesson_id, 'Lesson')

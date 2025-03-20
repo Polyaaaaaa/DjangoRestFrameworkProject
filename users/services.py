@@ -10,20 +10,6 @@ apikey = os.getenv("CUR_API_KEY")
 url = os.getenv("CUR_API_URL")
 
 stripe.api_key = os.getenv("STRIPE_API_KEY")
-stripe.Price.create(
-    currency="usd",
-    unit_amount=1000,
-    recurring={"interval": "month"},
-    product_data={"name": "Gold Plan"},
-)
-
-stripe.checkout.Session.create(
-    success_url="https://example.com/success",
-    line_items=[{"price": "price_1MotwRLkdIwHu7ixYcPLm5uZ", "quantity": 2}],
-    mode="payment",
-)
-
-stripe.Product.create(name="Gold Plan")
 
 
 def convert_currencies(rub_price):

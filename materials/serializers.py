@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from materials.models import Course, Lesson, Subscription
-from materials.services import convert_currencies
 from materials.validators import LinkValidator
 
 
