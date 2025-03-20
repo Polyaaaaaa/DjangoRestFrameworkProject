@@ -10,7 +10,11 @@ from rest_framework.views import APIView
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import MaterialsPaginator
 from materials.permissions import IsOwnerOrStaff
-from materials.serializers import CourseSerializers, LessonSerializers, SubscriptionSerializer
+from materials.serializers import (
+    CourseSerializers,
+    LessonSerializers,
+    SubscriptionSerializer,
+)
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -36,7 +40,9 @@ class CourseUpdateAPIView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         course = serializer.save()
-        last_updated = course.updated_at  # Убедитесь, что в модели Course есть поле `updated_at`
+        last_updated = (
+            course.updated_at
+        )  # Убедитесь, что в модели Course есть поле `updated_at`
 
         # Проверяем, прошло ли 4 часа с последнего обновления
         if last_updated is None or (now() - last_updated).total_seconds() > 14400:

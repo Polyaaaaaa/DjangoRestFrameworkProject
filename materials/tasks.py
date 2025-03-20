@@ -44,6 +44,7 @@ def update_send_email(pk, model):
 
     return f"Отправлено {len(recipient_list)} email."
 
+
 @shared_task
 def block_inactive_users():
     """Блокировка пользователей, которые не заходили более месяца."""

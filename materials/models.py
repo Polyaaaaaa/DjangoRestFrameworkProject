@@ -12,7 +12,9 @@ class Course(models.Model):
         User, on_delete=models.CASCADE, null=True, blank=True, related_name="courses"
     )
     amount = models.IntegerField(default=1000, verbose_name="Цена")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")  # Новое поле
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Дата обновления"
+    )  # Новое поле
 
     def __str__(self):
         return f"{self.name}"
@@ -36,7 +38,9 @@ class Lesson(models.Model):
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True, related_name="lessons"
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")  # Новое поле
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Дата обновления"
+    )  # Новое поле
 
     def __str__(self):
         return f"{self.name}"
