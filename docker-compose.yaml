@@ -60,6 +60,14 @@ services:
     volumes:
       - .:/code
 
+  nginx:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./html:/usr/share/nginx/html
+
 networks:
   default:
 
